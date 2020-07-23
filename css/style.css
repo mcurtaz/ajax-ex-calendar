@@ -6,14 +6,17 @@
 
 body{
   font-family: "Lato", sans-serif;
+  background-color: navy;
 }
 
 .container{
   width: 80%;
-  margin: 0 auto;
-  padding: 30px 0;
+  margin: 40px auto 0;
+  padding: 30px 20px;
   background-color: azure;
 }
+
+/* HEADER */
 
 #current-month{
   display: flex;
@@ -23,9 +26,12 @@ body{
 
 #current-month>div{
   width: 80px;
+  padding: 6px 0;
+
   font-size: 25px;
   font-weight: bolder;
   text-align: center;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -38,8 +44,11 @@ body{
   text-align: center;
 }
 
+/* CASELLE CALENDARIO */
+
 #days-of-month ul{
   list-style: none;
+
   width: 100%;
   margin-top: 40px;
 
@@ -54,10 +63,14 @@ body{
 #days-of-month ul li{
   position: relative;
   width: calc(100% / 7);
-  border: 1px solid black;
   padding: 20px;
+
+  border: 1px solid black;
   text-align: center;
 }
+
+
+/* FESTIVITà */
 
 #days-of-month ul li.festivity{
   color: red;
@@ -65,9 +78,16 @@ body{
 }
 
 .f-name{
+  max-width: 95%;
+
   position: absolute;
   left: 50%;
   bottom: 5px;
   transform: translateX(-50%);
+
   font-size: 10px;
+  /* se la scritta è troppo lunga il div al massimo è lungo il 90% del padre. non va a capo (white-space:nowrap) nasconde il testo in eccesso( overflow hidden) e mette dei puntini se c'è del testo che eccedrebbe il div (text-overflow: ellipsis;)*/
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

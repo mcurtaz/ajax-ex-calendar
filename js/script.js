@@ -8,7 +8,7 @@ function init() {
   printDayOfMonth(currentMonth); // funzione che stampa nell'html i li che rappresentano le caselle del calendario. gli passo i dati del mese che deve stampare
 
   ajaxHoliday(currentMonth); // funzione che chiede al server le date e i nomi delle festività del mese corrente (mese selezionato)
-
+  addButtonsListener();
 }
 
 function printDayOfMonth(currentMonth) {
@@ -74,4 +74,41 @@ function printHoliday(arrayHoliday) { // funzione che stampa le festività. rice
     target.find(".f-name").text(nameHoliday); // nello span con classe f-name copio il nome della festività
 
   }
+}
+
+
+function addButtonsListener() {
+  $("#month-next").click(function(){
+    changeMonth("next");
+  });
+  $("#month-prev").click(function(){
+    changeMonth("prev")
+  });
+}
+
+function changeMonth(to) {
+
+  var grabMonth = $("#current-month").data("current"); // per sapere il mese corrente lo salvo nell'html nel div #current-month in un attributo data-current e nel formato MM-YYYY. seleziono il div e salvo il contenuto dell'attributo data-current
+
+  var currentMonth = moment(grabMonth, "MM-YYYY"); //trasfomo la data presa prima in un oggetto moment
+
+  if (to == "next"){ // se la funzione la chiama il tasto next uso il metodo di moment .add() come argomenti gli do 1 (il numero da aggiungere) e "M" che sta per mesi. quindi prende la data contenuta in currentMonth aggiunge un mese e salva la nuova data in newCurrentMonth.
+    var newCurrentMonth = currentMonth.add(1,"M");
+
+  } else if (to == "prev"){ // potevo lasciare anche solo else ma per avere un controllo in più..
+
+    var newCurrentMonth = currentMonth.subtract(1,"M"); // se la funzione è chiamata dal tasto prev invece che aggiungere con .add() sottraggo con .subtract(). il principio resta lo stesso
+  }
+
+  $("#current-month").data("current", newCurrentMonth.format("MM-YYYY")); // prendo il div current-month e gli cambio il valore di data-current. Il metodo data con un solo argomento legge. con due argomenti il primo sta per data-"x", il secondo per il valore da assegnare all'attributo. in questo caso il valore da assegnare all'attributo data-current è newCurrentMonth.format("MM-YYYY") cioè dall'oggetto di moment newCurrentMonth estraggo la stringa della data nel formato "MM-YYYY". al prossimo giro di next o prev da questa stringa creerò un oggetto moment con il mese corrente. In pratica nessuna variabile in JS mi dice che mese sto visualizzando. questa info la salvo nell'attributo data-current del div con id="current-month"
+
+  var title = newCurrentMonth.format("MMMM") + " " + newCurrentMonth.format("YYYY"); // creo una stringa estraendo la data dal nuovo mese ottenuto con add o subtract. dall'oggetto prendo il mese in formato "MMMM" che per moment è il mese scritto a parole : january february ecc + uno spazio + l'anno estratto dall'oggetto nel formato "YYYY" che è l'anno scritto con 4 cifre.
+
+  $("#current-month-name").text(title); // stampo la stringa nel h1 che è il titolo. il nome del mese visualizzato
+
+  // rilancio le due funzioni passandogli il nuovo mese da visualizzare. una stampa i li(caselle del calendario) del nuovo mese. l'altra fa la chiamata ajax per farsi mandare dal server le festività del mese e le stampa nel calendario.
+
+  printDayOfMonth(newCurrentMonth); // funzione che stampa nell'html i li che rappresentano le caselle del calendario. gli passo i dati del mese che deve stampare
+  
+  ajaxHoliday(currentMonth); // funzione che chiede al server le date e i nomi delle festività del mese corrente (mese selezionato)
 }
