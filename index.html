@@ -13,7 +13,10 @@
     <!-- LINK GOOGLE FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
 
-    <!-- LINK CSS -->
+    <!-- CDN FONTAWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+    <!-- MIO CSS -->
     <link rel="stylesheet" href="./css/style.css">
 
     <!-- MIO SCRIPT JS -->
@@ -33,7 +36,13 @@
   <body>
     <div class="container">
       <div id="current-month" class="current-month">
-        <h1>Gennaio 2018</h1>
+        <div id="month-prev">
+          <i class="fas fa-chevron-left"></i>
+        </div>
+        <h1 id="current-month-name">Gennaio 2018</h1>
+        <div id="month-next">
+          <i class="fas fa-chevron-right"></i>
+        </div>
       </div>
       <div id="days-of-month">
         <ul>

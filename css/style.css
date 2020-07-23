@@ -15,7 +15,26 @@ body{
   background-color: azure;
 }
 
+#current-month{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#current-month>div{
+  width: 80px;
+  font-size: 25px;
+  font-weight: bolder;
+  text-align: center;
+  cursor: pointer;
+}
+
+#current-month>div:hover{
+  background-color: rgba(200,200,200, .3);
+}
+
 #current-month h1{
+  margin: 0 20px;
   text-align: center;
 }
 
