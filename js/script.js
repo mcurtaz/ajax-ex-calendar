@@ -1,3 +1,21 @@
+// Descrizione:
+// Creiamo un calendario dinamico con le festività.
+// Il calendario partirà da gennaio 2018 e si concluderà a dicembre 2018 (unici dati disponibili sull'API).
+// Milestone 1
+// Creiamo il mese di Gennaio, e con la chiamata all'API inseriamo le festività.
+// Milestone 2
+// Diamo la possibilità di cambiare mese, gestendo il caso in cui l'API non possa ritornare festività.
+// Attenzione!
+// Ogni volta che cambio mese dovrò:
+// Controllare se il mese è valido (per ovviare al problema che l'API non carichi holiday non del 2018)
+// Controllare quanti giorni ha il mese scelto formando così una lista
+// Chiedere all'api quali sono le festività per il mese scelto
+// Evidenziare le festività nella lista
+// Consigli e domande del giorno:
+// Abbiamo visto assieme una libereria che serve per gestire le date... quale sarà?
+// Una chiamata ajax può anche non andare a buon fine, che si fa in quel caso? Lasciamo l'utente ad attendere? ;)
+
+
 $(document).ready(init);
 
 function init() {
@@ -49,11 +67,16 @@ function ajaxHoliday(currentMonth) { // questa funzione fa una chiamata al serve
 
         printHoliday(data["response"]);
       } else { // la funzione success è false quando la comunicazione tra il client (io) e il server (loro) è andata a buon fine quindi il server mi risponde. però mi risponde picche. la risposta arriva, però qualcosa non va. Tipo che gli ho chiesto un mese e un anno che non ha.
-        alert("Impossibile trovare dati festività per questo mese!");
+        if (currentMonth.year() != "2018") { // se si esce dall'anno 2018 l'api non ci manderà le date delle festività. quindi se l'errore è lì stampo "date feste disponibili solo per il 2018" se l'errore è altrove comunque segnalo che c'è stato un errore
+          $(".errors").text("Attenzione: le date delle festività sono disponibili solo per l'anno 2018!");
+        } else{
+
+          $(".errors").text("Attenzione: le date delle festività sono disponibili solo per l'anno 2018!");
+        }
       }
     } ,
     error: function (err) { // in questo caso l'errore è dell'ajax cioè quello che non ha funzionato è proprio la comunicazione client-server. magari non ha trovato la pagina che cercavo o timeout della comunicazione quelle robe lì.
-      console.log("err", err);
+      $(".errors").text("Attenzione: le date delle festività sono disponibili solo per l'anno 2018!");
     }
 
   });
@@ -88,6 +111,8 @@ function addButtonsListener() {
 
 function changeMonth(to) {
 
+  $(".errors").text(""); // pulisco il div che segnala eventuali errori
+
   var grabMonth = $("#current-month").data("current"); // per sapere il mese corrente lo salvo nell'html nel div #current-month in un attributo data-current e nel formato MM-YYYY. seleziono il div e salvo il contenuto dell'attributo data-current
 
   var currentMonth = moment(grabMonth, "MM-YYYY"); //trasfomo la data presa prima in un oggetto moment
@@ -109,6 +134,6 @@ function changeMonth(to) {
   // rilancio le due funzioni passandogli il nuovo mese da visualizzare. una stampa i li(caselle del calendario) del nuovo mese. l'altra fa la chiamata ajax per farsi mandare dal server le festività del mese e le stampa nel calendario.
 
   printDayOfMonth(newCurrentMonth); // funzione che stampa nell'html i li che rappresentano le caselle del calendario. gli passo i dati del mese che deve stampare
-  
+
   ajaxHoliday(currentMonth); // funzione che chiede al server le date e i nomi delle festività del mese corrente (mese selezionato)
 }

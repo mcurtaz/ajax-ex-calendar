@@ -11,6 +11,7 @@ body{
 
 .container{
   width: 80%;
+  min-height: 650px;
   margin: 40px auto 0;
   padding: 30px 20px;
   background-color: azure;
@@ -90,4 +91,14 @@ body{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Piccolo div per segnalare eventuali errori senza fare alert che danno fastidio */
+
+.errors{
+  margin: 20px 0;
+  color: darkred;
+  text-align: center;
+  font-size: 14px;
+  text-transform: uppercase;
 }
