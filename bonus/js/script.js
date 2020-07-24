@@ -19,7 +19,7 @@
 $(document).ready(init);
 
 function init() {
-    // mese di partenza
+  // mese di partenza
   var currentMonth = moment("01-2018", "MM-YYYY"); // passandogli la stringa mese e anno e dicendogli cosa rappresenta quella stringa salvo nella variabile il mese corrente. diventa un oggetto moment con le info mese e anno e tutte le altre info che posso ricavarci
 
 
@@ -27,16 +27,17 @@ function init() {
 
   ajaxHoliday(currentMonth); // funzione che chiede al server le date e i nomi delle festività del mese corrente (mese selezionato)
 
-  // Listeners eventi bottoni
-  addButtonsListener();
+  // Listeners eventi bottoni - tastiera - select
+  addListeners();
 }
 
 // FUNZIONI DI STAMPA MESI E festività
 
 // funzione che stampa i li nell'html che saranno le caselle del CALENDARIO
 
-
 function printDayOfMonth(currentMonth) {
+
+  var lng = $("#lng").val();
 
   var numOfDays = currentMonth.daysInMonth(); // il metodo daysInMonth() mi dice quanti giorni ci sono in un mese
 
@@ -46,6 +47,28 @@ function printDayOfMonth(currentMonth) {
 
   target.html(""); // svuoto il target così se dovessi stampare un altro mese non si aggiunge al precedente ma lo sovrascrive
 
+
+
+  // -----  BONUS ------ sezioncina per stampare le caselle bianche per far corrispondere il giorno all'intestazione sopra
+
+  var firstDay = moment({month: currentMonth.month(), year: currentMonth.year(), day:1}); // creo un oggetto moment con come giorno il primo giorno del mese corrente
+  var firstDayNumber = firstDay.format("d"); // format("d") restituisce un numero da 0 a 6 corrispondente al giorno della settimana 0 sunday 1 monday e così via
+
+  // ciclo che stampa caselle vuote per allineare il giorno della settimana con la griglia sopra
+
+  for (var i = 0; i < firstDayNumber; i++) { // stampo caselle bianche tanto quanto il numero del giorno della settimana - 1 (i va da 0 a strettamente minore di. quindi faccio un giro in meno). in questo modo pareggio le caselle in pagina
+    var casellaVuota = compiled({
+      "data-day": "",
+      "n-day": "",
+      "dow": ""
+    })
+
+    target.append(casellaVuota);
+  };
+
+
+  // ciclo che stampa i giorni effettivi
+
   for (var i = 1; i <= numOfDays; i++) { // ciclo per il numero di giorni del mese in modo da stampare il numero giusto di giorni
 
     var dataComplete = moment({year: currentMonth.year(), month: currentMonth.month(), day: i}); // un oggetto moment si può creare anche passandogli i dati con un oggetto. in questo caso gli passo l'anno e il mese estratti dall'oggetto currentMonth. il numero di giorno invece è la i. quindi incrementa ad ogni ciclo
@@ -53,12 +76,13 @@ function printDayOfMonth(currentMonth) {
     var newLi = compiled({ // compilo il template
       "data-day": dataComplete.format("YYYY-MM-DD"), // nel data-day assegno la data stampata come me la ritornerà il server. quindi nel formato anno mese giorno. in questo modo sarà più semplice trovare la corrispondenza tra la data della festività mandata dal server e la data da modificare sul calendario
       "n-day": dataComplete.format("D"), // stampo il numero del giorno. Potrei usare anche la i. oppure potrei usare il format("DD") se volessi 01-02-03 invece di 1-2-3
-      "dow": dataComplete.format("dddd") // stampo il nome del giorno ("dddd") stampa monday tuesday ecc ("ddd") stampa mon tue wen ecc
+      "dow": dataComplete.locale(lng).format("dddd") // stampo il nome del giorno ("dddd") stampa monday tuesday ecc ("ddd") stampa mon tue wen ecc
     });
 
     target.append(newLi); // appendo il li compilato al target.
   }
 }
+
 
 
 // funzione della api che riceve dal server le festività
@@ -93,6 +117,7 @@ function ajaxHoliday(currentMonth) { // questa funzione fa una chiamata al serve
 }
 
 
+
 // funzione che stampa sul calendario le festività ricevute dall API
 
 function printHoliday(arrayHoliday) { // funzione che stampa le festività. riceve l'array di oggetti delle festività del mese corrente. ogni oggetto dell'array contiene "date" con la data nella forma YYYY-MM-DD e "name" con il nome della festività
@@ -112,27 +137,50 @@ function printHoliday(arrayHoliday) { // funzione che stampa le festività. rice
   }
 }
 
-// --------  LISTENERS  EVENTI ----
 
-function addButtonsListener() {
+
+
+
+// --------  LISTENERS  EVENTI ----
+function addListeners() {
+
+  // click su avanti indietro un mese
   $("#month-next").click(function(){
     changeMonth("next");
   });
   $("#month-prev").click(function(){
-    changeMonth("prev")
+    changeMonth("prev");
   });
+
+   // avanti e indietro un mese con freccia avanti e indietro
+  $(document).keyup(function(event){
+
+    if (event.which == 39){
+      changeMonth("next");
+    } else if (event.which == 37){
+      changeMonth("prev");
+    }
+
+  });
+
+
+  // funzione al cambio selezione lingua
+  $("#lng").change(changeLanguage);
+
 }
 
 
 // funzione che cambia il mese. argomento to per determinare se andare avanti o indietro
-
 function changeMonth(to) {
+
+  var lng = $("#lng").val(); // prendo il valore della lingua selezionata "en" per inglese "it" per italiano
 
   $(".errors").text(""); // pulisco il div che segnala eventuali errori
 
   var grabMonth = $("#current-month").data("current"); // per sapere il mese corrente lo salvo nell'html nel div #current-month in un attributo data-current e nel formato MM-YYYY. seleziono il div e salvo il contenuto dell'attributo data-current
 
   var currentMonth = moment(grabMonth, "MM-YYYY"); //trasfomo la data presa prima in un oggetto moment
+
 
   if (to == "next"){ // se la funzione la chiama il tasto next uso il metodo di moment .add() come argomenti gli do 1 (il numero da aggiungere) e "M" che sta per mesi. quindi prende la data contenuta in currentMonth aggiunge un mese e salva la nuova data in newCurrentMonth.
     var newCurrentMonth = currentMonth.add(1,"M");
@@ -143,12 +191,12 @@ function changeMonth(to) {
   }
 
 
-    // ATTENZIONE: SI SCOPRì CHE LA FUNZIONE .ADD() E .SUBTRACT() MODIFICANO L'OGGETTO. QUINDI ANCHE SE IO LO SALVO NELLA VARIABILE newCurrentMonth ANCHE currentMonth è STATO MODIFICATO. SE FACCIO IL LOG LO VEDO. QUINDI SE MI SERVISSE MANTENERE LA VARIABILE currentMonth DOVREI PRIMA SALVARMELA IN UN ALTRA VARIABILE oldCurrentMonth
+  // ATTENZIONE: SI SCOPRì CHE LA FUNZIONE .ADD() E .SUBTRACT() MODIFICANO L'OGGETTO. QUINDI ANCHE SE IO LO SALVO NELLA VARIABILE newCurrentMonth ANCHE currentMonth è STATO MODIFICATO. SE FACCIO IL LOG LO VEDO. QUINDI SE MI SERVISSE MANTENERE LA VARIABILE currentMonth DOVREI PRIMA SALVARMELA IN UN ALTRA VARIABILE oldCurrentMonth
 
 
   $("#current-month").data("current", newCurrentMonth.format("MM-YYYY")); // prendo il div current-month e gli cambio il valore di data-current. Il metodo data con un solo argomento legge. con due argomenti il primo sta per data-"x", il secondo per il valore da assegnare all'attributo. in questo caso il valore da assegnare all'attributo data-current è newCurrentMonth.format("MM-YYYY") cioè dall'oggetto di moment newCurrentMonth estraggo la stringa della data nel formato "MM-YYYY". al prossimo giro di next o prev da questa stringa creerò un oggetto moment con il mese corrente. In pratica nessuna variabile in JS mi dice che mese sto visualizzando. questa info la salvo nell'attributo data-current del div con id="current-month"
 
-  var title = newCurrentMonth.format("MMMM") + " " + newCurrentMonth.format("YYYY"); // creo una stringa estraendo la data dal nuovo mese ottenuto con add o subtract. dall'oggetto prendo il mese in formato "MMMM" che per moment è il mese scritto a parole : january february ecc + uno spazio + l'anno estratto dall'oggetto nel formato "YYYY" che è l'anno scritto con 4 cifre.
+  var title = newCurrentMonth.locale(lng).format("MMMM") + " " + newCurrentMonth.format("YYYY"); // creo una stringa estraendo la data dal nuovo mese ottenuto con add o subtract. dall'oggetto prendo il mese in formato "MMMM" che per moment è il mese scritto a parole : january february ecc + uno spazio + l'anno estratto dall'oggetto nel formato "YYYY" che è l'anno scritto con 4 cifre. //BONUS con locale(en) imposto l'oggetto moment in inglese con locale(it) in italiano(se ho linkato la libreria di moment in italiano) utilizzando la variabile la funzione stampa nella lingua selezionata nella select
 
   $("#current-month-name").text(title); // stampo la stringa nel h1 che è il titolo. il nome del mese visualizzato
 
@@ -157,4 +205,36 @@ function changeMonth(to) {
   printDayOfMonth(newCurrentMonth); // funzione che stampa nell'html i li che rappresentano le caselle del calendario. gli passo i dati del mese che deve stampare
 
   ajaxHoliday(newCurrentMonth); // funzione che chiede al server le date e i nomi delle festività del mese corrente (mese selezionato)
+
+
+}
+
+
+
+//  funzione che cambia la lingua senza cambiare mese visualizzato
+
+function changeLanguage() {
+  // funzione per cambiare lingua continuando a visualizzare lo stesso mese
+
+    var lng = $("#lng").val(); // prendo il valore della select "en" inglese "it" italiano (se ho linkato la libreria moment locale italiana)
+
+    var grabMonth = $("#current-month").data("current"); // prendo dal data attribute data-current del div #current-month dove tengo salvato il valore del mese visualizzato nella forma "MM-YYYY"
+
+    var currentMonth = moment(grabMonth, "MM-YYYY"); // col dato di prima creo un oggetto moment passandogli i dati e una stringa che gli fa capire che dati sono "MM-YYYY"
+
+    var title = currentMonth.locale(lng).format("MMMM") + " " + currentMonth.format("YYYY"); // riscrivo il titolo con mese e anno tenendo conto della variabile lng. Infatti locale(it) scrive i mesi in italiano locale(en) in inglese
+
+    $("#current-month-name").text(title); // stampo la stringa mese anno nella lingua selezionata
+
+    $("#days-of-month .en").hide(); // nascondo le intestazioni dei giorni sia in italiano che in inglese
+    $("#days-of-month .it").hide();
+
+    $("#days-of-month ." + lng).css('display', 'flex'); // mostro l'intestazione dei giorni nella lingua scelta. se facessi show gli darebbe style display: block. invece io voglio che quel ul con classe .en o .it a seconda della lingua selezionata abbia display: flex. in modo che i li con in nomi dei giorni si leggano in orizzontale
+
+    // ristampo i giorni e le festività. la funzione printDayOfMonth stampa nella lingua selezionata
+
+    printDayOfMonth(currentMonth); // funzione che stampa nell'html i li che rappresentano le caselle del calendario. gli passo i dati del mese che deve stampare
+
+    ajaxHoliday(currentMonth); // funzione che chiede al server le date e i nomi delle festività del mese corrente (mese selezionato)
+
 }

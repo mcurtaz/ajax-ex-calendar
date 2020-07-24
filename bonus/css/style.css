@@ -1,0 +1,138 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  font-family: "Lato", sans-serif;
+  background-color: navy;
+}
+
+.container{
+  width: 80%;
+  min-height: 650px;
+  margin: 40px auto 0;
+  padding: 30px 20px;
+  background-color: azure;
+}
+
+/* HEADER */
+
+#current-month{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+#current-month>.btn{
+  width: 80px;
+  padding: 6px 0;
+
+  font-size: 25px;
+  font-weight: bolder;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#current-month>.btn:hover{
+  background-color: rgba(200,200,200, .3);
+}
+
+#current-month h1{
+  margin: 0 20px;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+#select-lng{
+  position: absolute;
+  top: 50%;
+  right: 40px;
+  transform: translateY(-50%);
+
+  display: flex;
+
+  font-size: 15px;
+}
+
+#select-lng label{
+  margin-right: 8px;
+}
+/* CASELLE CALENDARIO */
+
+/* intestazione nomi dei giorni */
+
+#days-of-month .top-days-names ul{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 40px 0 8px;
+}
+
+#days-of-month .top-days-names ul li{
+  border: 2px solid black;
+}
+
+#days-of-month .top-days-names .en{
+  display: none;
+}
+#days-of-month ul{
+  list-style: none;
+
+  width: 100%;
+
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+  flex-wrap: wrap;
+}
+
+#days-of-month ul li{
+  position: relative;
+  width: calc(100% / 7);
+  padding: 20px;
+
+  border: 1px solid black;
+  text-align: center;
+}
+
+#days-of-month .dow{
+  text-transform: capitalize;
+}
+
+/* FESTIVITà */
+
+#days-of-month ul li.festivity{
+  color: red;
+  border-color: red;
+}
+
+.f-name{
+  max-width: 95%;
+
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  transform: translateX(-50%);
+
+  font-size: 10px;
+  /* se la scritta è troppo lunga il div al massimo è lungo il 90% del padre. non va a capo (white-space:nowrap) nasconde il testo in eccesso( overflow hidden) e mette dei puntini se c'è del testo che eccedrebbe il div (text-overflow: ellipsis;)*/
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Piccolo div per segnalare eventuali errori senza fare alert che danno fastidio */
+
+.errors{
+  margin: 20px 0;
+  color: darkred;
+  text-align: center;
+  font-size: 14px;
+  text-transform: uppercase;
+}
