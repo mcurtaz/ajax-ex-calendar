@@ -179,6 +179,11 @@ function changeMonth(to) {
 
   var grabMonth = $("#current-month").data("current"); // per sapere il mese corrente lo salvo nell'html nel div #current-month in un attributo data-current e nel formato MM-YYYY. seleziono il div e salvo il contenuto dell'attributo data-current
 
+  // ATTENZIONE SE FACCIO IL LOG DI grabMonth CHE NON è ALTRO CHE IL VALORE DELL'ATTRIBUTO data-current DEL DIV #current-month MI DA DI VOLTA IN VOLTA IL VALORE CORRETTO. PARTE DA 01-2018 POI SE VADO AVANTI COL MESE DEL CALENDARIO 02-2018 03-2018 E COSì VIA. SE GUARDO CON L'INSPECTOR DI CHROME (ANCHE CON FIREFOX UGUALE) PERò L'ELEMENTO HA SEME ATTRIBUTO data-current="01-2018". COMUNQUE JS LEGGE IL VALORE GIUSTO.
+
+  console.log(grabMonth);
+
+
   var currentMonth = moment(grabMonth, "MM-YYYY"); //trasfomo la data presa prima in un oggetto moment
 
 
@@ -192,6 +197,8 @@ function changeMonth(to) {
 
 
   // ATTENZIONE: SI SCOPRì CHE LA FUNZIONE .ADD() E .SUBTRACT() MODIFICANO L'OGGETTO. QUINDI ANCHE SE IO LO SALVO NELLA VARIABILE newCurrentMonth ANCHE currentMonth è STATO MODIFICATO. SE FACCIO IL LOG LO VEDO. QUINDI SE MI SERVISSE MANTENERE LA VARIABILE currentMonth DOVREI PRIMA SALVARMELA IN UN ALTRA VARIABILE oldCurrentMonth
+  console.log(currentMonth.month());
+  console.log(newCurrentMonth.month());
 
 
   $("#current-month").data("current", newCurrentMonth.format("MM-YYYY")); // prendo il div current-month e gli cambio il valore di data-current. Il metodo data con un solo argomento legge. con due argomenti il primo sta per data-"x", il secondo per il valore da assegnare all'attributo. in questo caso il valore da assegnare all'attributo data-current è newCurrentMonth.format("MM-YYYY") cioè dall'oggetto di moment newCurrentMonth estraggo la stringa della data nel formato "MM-YYYY". al prossimo giro di next o prev da questa stringa creerò un oggetto moment con il mese corrente. In pratica nessuna variabile in JS mi dice che mese sto visualizzando. questa info la salvo nell'attributo data-current del div con id="current-month"
